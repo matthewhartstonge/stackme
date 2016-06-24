@@ -10,7 +10,7 @@ nginx:
     - "php-fpm:php-fpm"
 
 php-fpm:
-  build: php
+  image: matthewhartstonge/stackme-php7-fpm
   volumes:
     #- ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf
     - ./php/php.ini:/usr/local/etc/php/php.ini
