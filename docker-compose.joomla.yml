@@ -1,0 +1,46 @@
+nginx:
+  image: nginx:stable-alpine
+  ports:
+    - "80:80"
+  volumes:
+    - ./nginx/joomla/nginx.conf:/etc/nginx/nginx.conf
+    - ./nginx/joomla/default.conf:/etc/nginx/conf.d/default.conf
+    - ./html:/var/www/html
+  links:
+    - "php-fpm:php-fpm"
+
+php-fpm:
+  build: php
+  volumes:
+    #- ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    - ./php/php.ini:/usr/local/etc/php/php.ini
+    - ./html:/var/www/html
+    - ./logs:/logs
+  links:
+    - "mariadb:mariadb"
+    #- pgdb:pgdb
+
+# Joomla Works with PGSQL
+#pgdb:
+#  image: postgres
+#  environment:
+#    POSTGRES_DB: secret_db
+#    POSTGRES_USER: secret_user
+#    POSTGRES_PASSWORD: secret_user_password
+#    PGDATA: /var/lib/postgresql/data/pgdata
+#  volumes:
+#    - ./dbdata/pgdata:/var/lib/postgresql/data/pgdata
+
+mariadb:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: super_secret_password
+    MYSQL_DATABASE: secret_db
+    MYSQL_USER: secret_user
+    MYSQL_PASSWORD: secret_user_password
+  volumes:
+    - ./dbdata/mysql:/var/lib/mysql
+    # import a mysqldump backup. Make sure to edit the file and add USE your_db;
+    # At the top of the script. After importing, due to the persistent folder
+    # mapping, you can comment out the mapping below.
+    - ./dbdata/backup.sql:/docker-entrypoint-initdb.d/mysql.sql
