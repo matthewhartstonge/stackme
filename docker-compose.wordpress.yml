@@ -15,7 +15,7 @@ services:
   php-fpm:
     build:
       context: ./php
-    image: matthewhartstonge/stackme-php7-fpm:7.1
+    image: matthewhartstonge/stackme-php7-fpm:7.2
     volumes:
       #- ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./php/php.ini:/usr/local/etc/php/php.ini

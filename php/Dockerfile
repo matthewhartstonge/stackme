@@ -1,4 +1,4 @@
-FROM php:7.1-fpm-alpine
+FROM php:7.2-fpm-alpine
 LABEL MAINTAINER="Matt Hartstonge <matt@mykro.co.nz>"
 
 RUN set -ex; \
@@ -6,7 +6,6 @@ RUN set -ex; \
     apk add --no-cache --virtual .build-deps \
         freetype-dev \
         libjpeg-turbo-dev \
-        libmcrypt-dev \
         imagemagick-dev \
         libpng-dev \
         libzip-dev \
@@ -30,7 +29,6 @@ RUN set -ex; \
         bcmath \
         exif \
         gd \
-        mcrypt \
         mysqli \
         opcache \
         pdo \
