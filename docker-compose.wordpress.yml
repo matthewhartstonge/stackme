@@ -39,4 +39,4 @@ services:
       # import a mysqldump backup. Make sure to edit the file and add USE your_db;
       # At the top of the script. After importing, due to the persistent folder
       # mapping, you can comment out the mapping below.
-      - ./dbdata/backup.sql:/docker-entrypoint-initdb.d/mysql.sql
+      # - ./dbdata/backup.sql:/docker-entrypoint-initdb.d/mysql.sql
