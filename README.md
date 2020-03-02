@@ -2,7 +2,8 @@
 
 ##### An Nginx, PHP-FPM, Maria/Postgres Stack
 
-These docker-compose stacks seek to be the de-facto standard for php based CMSs!
+These stacks seek to provide a customisable more-ready-for-production 
+docker-compose based templates for php based CMSs.
 
 ## Why?
 Simply put files in the right folders then go on your merry way laughing to the
@@ -25,7 +26,7 @@ ownerships.
 ```sh
 chmod +x conform.sh
 ./conform.sh
-docker-compose -f docker-compose.YOUR_CHOICE_AS_CMS_BRO.yml up
+docker-compose -f docker-compose.YOUR_CHOICE_OF_CMS.yml up
 ```
 
 At which point Docker should do it's thing, pulling, building and getting ready
@@ -57,14 +58,19 @@ have been added to the base upstream image:
 * pgsql - PostgresSQL PHP Driver
 * zip - Well, for zipping things!
 
+## Building
+
+The easiest way to get the docker image to build is to use `docker-compose` itself, for example:
+
+```shell
+docker-compose -f docker-compose.wordpress.yml build
+```
+
 ## Todo
 
-* Get Wordpress docker-compose config working
 * Nginx SSL config
 * Create cleaner folder structure?
 * Create script to get latest CMS - that also puts files in the right places
-* HA/Service Discovery/Load Balancing
 
 ## Contributions
-Plz contribute! Issues, PRs, new CMS stacks, db/php performance tweaks - 
-all the things!
+Will take Issues, PRs, new CMS stacks, db/php performance tweaks - all the things!
