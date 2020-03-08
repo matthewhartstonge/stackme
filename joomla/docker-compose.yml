@@ -30,7 +30,6 @@ services:
       - php
     volumes:
       - ./html:/var/www/html
-      - ./logs/php:/logs
       #- ../php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ../php/php.ini:/usr/local/etc/php/php.ini
 
