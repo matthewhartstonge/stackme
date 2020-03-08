@@ -10,6 +10,7 @@ RUN set -ex; \
         libpng-dev \
         libzip-dev \
         postgresql-dev \
+        tidyhtml-dev \
     ; \
     \
     # Compile PHP extra libs
@@ -17,8 +18,14 @@ RUN set -ex; \
         -with-freetype-dir=/usr/include/  \
         -with-png-dir=/usr/png/ \
         -with-jpeg-dir=/usr/jpeg/; \
+    # Add postgres support
     docker-php-ext-configure pgsql \
         -with-pgsql=/usr/include/postgresql/; \
+    # Add php-apc support
+    pecl install apcu &&\
+    pecl install apcu_bc-1.0.5 &&\
+    docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini &&\
+    docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini &&\
     \
     # While PHP libs are available, run pecl
     pecl install imagick-3.4.4; \
@@ -34,6 +41,7 @@ RUN set -ex; \
         pdo \
         pdo_pgsql \
         pgsql \
+        tidy \
         zip \
     ; \
     \
