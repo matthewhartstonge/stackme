@@ -20,8 +20,8 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 
 1. Make sure you have [docker][docker] AND [docker-compose][docker-compose] installed on your host.
 2. download the latest version of your hot new php based CMS:
-..* [Joomla](https://downloads.joomla.org/)
-..* [Wordpress](https://wordpress.org/download/)
+    * [Joomla](https://downloads.joomla.org/)
+    * [Wordpress](https://wordpress.org/download/)
 3. unzip that bad boy into the `./YOUR_CMS_CHOICE/html` folder.
 4. Run the following in a terminal to correct file ownership for alpine:
 
