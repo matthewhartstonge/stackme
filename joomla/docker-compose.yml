@@ -1,0 +1,67 @@
+version: "3.7"
+
+networks:
+  mysql:
+  #pgdb:
+  php:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    networks:
+      - php
+    volumes:
+      - ./html:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+  php-fpm:
+    # Uncomment the build context in order to build with any changes made
+    # to the docker file.
+    #build:
+    #  context: ../docker/php/7.1
+    image: matthewhartstonge/stackme-php7-fpm:7.1
+    networks:
+      - mysql
+      #- pgdb
+      - php
+    volumes:
+      - ./html:/var/www/html
+      - ./logs/php:/logs
+      #- ../php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ../php/php.ini:/usr/local/etc/php/php.ini
+
+  # Joomla Works with PGSQL
+  #pgdb:
+  #  image: postgres
+  #  environment:
+  #    POSTGRES_DB: secret_db
+  #    POSTGRES_USER: secret_user
+  #    POSTGRES_PASSWORD: secret_user_password
+  #    PGDATA: /var/lib/postgresql/data/pgdata
+  #  networks:
+  #    - pgdb
+  #  volumes:
+  #    - ./dbdata/pgdata:/var/lib/postgresql/data/pgdata
+
+  mariadb:
+    image: mariadb:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: super_secret_password
+      MYSQL_DATABASE: secret_db
+      MYSQL_USER: secret_user
+      MYSQL_PASSWORD: secret_user_password
+    networks:
+      - mysql
+    # Uncomment the ports block if you want to connect to the database locally.
+    #ports:
+    #  - "3306:3306"
+    volumes:
+      - ./dbdata/mysql:/var/lib/mysql
+      # import a mysqldump backup. Make sure to edit the file and add USE your_db;
+      # At the top of the script. After importing, due to the persistent folder
+      # mapping, you can comment out the mapping below.
+      #-./dbdata/backup.sql:/docker-entrypoint-initdb.d/mysql.sql
