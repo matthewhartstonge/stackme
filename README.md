@@ -14,6 +14,9 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 * nginx (alpine)
 * php-fpm 7 (alpine + customisation)
 * MariaDB/PostgresSQL
+* varnish-cache*
+
+*currently wordpress only.
 
 ## Quickstart
 ### Fresh beginnings
@@ -71,6 +74,17 @@ The easiest way to get the docker image to build is to use `docker-compose` itse
 docker-compose -f ./wordpress/docker-compose.yml build
 ```
 
+## Performance Boosting with Varnish
+There now exists a wordpress stack that supports the use of [Varnish][varnish] for page caching. 
+Varnish can speed up page load for visitors by a massive factor simply by caching the rendered page 
+after being processed once by php.
+
+To start playing with this stack, run:
+
+```shell
+docker-compose -f ./wordpress/docker-compose.varnish.yml up
+```
+
 ## Todo
 
 - [ ] Nginx SSL config.
@@ -84,3 +98,4 @@ Will take Issues, PRs, new CMS stacks, db/php performance tweaks - all the thing
 
 [docker]: https://www.docker.com
 [docker-compose]: https://docs.docker.com/compose/install/
+[varnish]: https://varnish-cache.org/
