@@ -13,3 +13,4 @@ mkdir -p html
 chown -R 82:82 html
 mkdir -p logs
 chown -R 82:82 logs
+chmod 755 html/wp-content

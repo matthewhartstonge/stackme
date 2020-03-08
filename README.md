@@ -18,15 +18,17 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 ## Quickstart
 ### Fresh beginnings
 
-First, make sure you have docker AND docker-compose installed on your host.
-If you have downloaded the latest version of your hot new php based CMS, 
-unzip that bad boy into the html folder. Then all we need to do is change them
-ownerships.
+1. Make sure you have [docker][docker] AND [docker-compose][docker-compose] installed on your host.
+2. download the latest version of your hot new php based CMS:
+..* [Joomla](https://downloads.joomla.org/)
+..* [Wordpress](https://wordpress.org/download/)
+3. unzip that bad boy into the `./YOUR_CMS_CHOICE/html` folder.
+4. Run the following in a terminal to correct file ownership for alpine:
 
 ```sh
-chmod +x conform.sh
-./conform.sh
-docker-compose -f docker-compose.YOUR_CHOICE_OF_CMS.yml up
+cd ./wordpress
+chmod +x conform.sh && ./conform.sh
+docker-compose up
 ```
 
 At which point Docker should do it's thing, pulling, building and getting ready
@@ -50,12 +52,15 @@ imported.
 For the images to work better with popular CMS's the following php extensions 
 have been added to the base upstream image:
 
-* gd - A graphics drawing library that enables manipulating image data
-* mcrypt - Provides encryption capabilities
-* mysqli - MySQL PHP driver
+* apcu - For an alternate opcache.
+* apcu_bc - This module provides a backwards APC compatible API using APCu (object caching).
+* gd - A graphics drawing library that enables manipulating image data.
+* imagick - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
+* mysqli - MySQL PHP driver.
 * pdo - A lean, consistent way to access databases.
-* pdo_pgsql - A driver that implements the PHP Data Objects (PDO) interface
-* pgsql - PostgresSQL PHP Driver
+* pdo_pgsql - A driver that implements the PHP Data Objects (PDO) interface.
+* pgsql - PostgresSQL PHP Driver.
+* tidy - For correcting and minifying HTML assets.
 * zip - Well, for zipping things!
 
 ## Building
@@ -63,14 +68,19 @@ have been added to the base upstream image:
 The easiest way to get the docker image to build is to use `docker-compose` itself, for example:
 
 ```shell
-docker-compose -f docker-compose.wordpress.yml build
+docker-compose -f ./wordpress/docker-compose.yml build
 ```
 
 ## Todo
 
-* Nginx SSL config
-* Create cleaner folder structure?
-* Create script to get latest CMS - that also puts files in the right places
+- [ ] Nginx SSL config.
+- [ ] Create script to get latest CMS - that also puts files in the right places.
+- [ ] Create script to generate config given a site name.
 
 ## Contributions
 Will take Issues, PRs, new CMS stacks, db/php performance tweaks - all the things!
+
+
+
+[docker]: https://www.docker.com
+[docker-compose]: https://docs.docker.com/compose/install/
