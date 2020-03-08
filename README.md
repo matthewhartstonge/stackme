@@ -50,12 +50,15 @@ imported.
 For the images to work better with popular CMS's the following php extensions 
 have been added to the base upstream image:
 
-* gd - A graphics drawing library that enables manipulating image data
-* mcrypt - Provides encryption capabilities
-* mysqli - MySQL PHP driver
+* apcu - For an alternate opcache.
+* apcu_bc - This module provides a backwards APC compatible API using APCu (object caching).
+* gd - A graphics drawing library that enables manipulating image data.
+* imagick - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
+* mysqli - MySQL PHP driver.
 * pdo - A lean, consistent way to access databases.
-* pdo_pgsql - A driver that implements the PHP Data Objects (PDO) interface
-* pgsql - PostgresSQL PHP Driver
+* pdo_pgsql - A driver that implements the PHP Data Objects (PDO) interface.
+* pgsql - PostgresSQL PHP Driver.
+* tidy - For correcting and minifying HTML assets.
 * zip - Well, for zipping things!
 
 ## Building
