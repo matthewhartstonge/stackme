@@ -1,5 +1,5 @@
 # refer upstream: https://github.com/docker-library/wordpress
-FROM php:7.3-fpm-alpine
+FROM php:7.4-fpm-alpine
 LABEL MAINTAINER="Matt Hartstonge <matt@mykro.co.nz>"
 
 RUN set -ex; \
@@ -16,9 +16,8 @@ RUN set -ex; \
     \
     # Compile PHP extra libs
     docker-php-ext-configure gd \
-        -with-freetype-dir=/usr/include/  \
-        -with-png-dir=/usr/png/ \
-        -with-jpeg-dir=/usr/jpeg/; \
+        --with-freetype \
+        --with-jpeg; \
     # Add postgres support
     docker-php-ext-configure pgsql \
         -with-pgsql=/usr/include/postgresql/; \

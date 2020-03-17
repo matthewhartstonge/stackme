@@ -1,3 +1,4 @@
+# refer upstream: https://github.com/docker-library/wordpress
 FROM php:7.2-fpm-alpine
 LABEL MAINTAINER="Matt Hartstonge <matt@mykro.co.nz>"
 
