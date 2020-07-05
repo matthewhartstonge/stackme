@@ -24,7 +24,7 @@ RUN set -ex; \
     docker-php-ext-configure pgsql \
         -with-pgsql=/usr/include/postgresql/; \
     # Add php-apc support
-    pecl install apcu &&\
+    pecl install apcu-5.1.18 &&\
     pecl install apcu_bc-1.0.5 &&\
     docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini &&\
     docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini &&\
