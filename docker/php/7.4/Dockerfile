@@ -5,6 +5,8 @@ LABEL MAINTAINER="Matt Hartstonge <matt@mykro.co.nz>"
 RUN set -ex; \
     \
     apk add --no-cache --virtual .build-deps \
+        autoconf \
+		bzip2-dev \
         freetype-dev \
         libjpeg-turbo-dev \
         imagemagick-dev \
@@ -33,12 +35,14 @@ RUN set -ex; \
     \
     # Install php compiled extensions
     docker-php-ext-install -j "$(nproc)" \
-        bcmath \
+		bcmath \
+        bz2 \
         exif \
         gd \
         mysqli \
         opcache \
         pdo \
+        pdo_mysql \
         pdo_pgsql \
         pgsql \
         tidy \
