@@ -1,44 +1,46 @@
 # refer upstream: https://github.com/docker-library/wordpress
 FROM php:7.4-fpm-alpine
-LABEL MAINTAINER="Matt Hartstonge <matt@mykro.co.nz>"
+LABEL MAINTAINER="Matthew Hartstonge <matt@mykro.co.nz>"
 
-RUN set -ex; \
-    \
-    apk add --no-cache --virtual .build-deps \
+# persistent dependencies
+RUN set -eux; \
+    apk add --no-cache \
+        # Ghostscript is required for rendering PDF previews
+        ghostscript \
+        # Alpine package for "imagemagick" contains ~120 .so files, see: https://github.com/docker-library/wordpress/pull/497
+        imagemagick \
+    ;
+
+# install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
+RUN apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
         autoconf \
-		bzip2-dev \
+        bzip2-dev \
         freetype-dev \
-        libjpeg-turbo-dev \
+        icu-dev \
         imagemagick-dev \
+        libjpeg-turbo-dev \
         libpng-dev \
+        libwebp-dev \
         libzip-dev \
         postgresql-dev \
         tidyhtml-dev \
     ; \
-    \
-    # Compile PHP extra libs
+    # Configure image support
     docker-php-ext-configure gd \
         --with-freetype \
-        --with-jpeg; \
-    # Add postgres support
-    docker-php-ext-configure pgsql \
-        -with-pgsql=/usr/include/postgresql/; \
-    # Add php-apc support
-    pecl install apcu-5.1.18 &&\
-    pecl install apcu_bc-1.0.5 &&\
-    docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini &&\
-    docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini &&\
-    \
-    # While PHP libs are available, run pecl
-    pecl install imagick-3.4.4; \
-    docker-php-ext-enable imagick; \
-    \
-    # Install php compiled extensions
+        --with-jpeg \
+        --with-webp  \
+    ; \
+    # Configure postgres support
+    docker-php-ext-configure pgsql -with-pgsql=/usr/include/postgresql/ ; \
+    # Install php extensions
     docker-php-ext-install -j "$(nproc)" \
-		bcmath \
+        bcmath \
         bz2 \
         exif \
         gd \
+        intl \
         mysqli \
         opcache \
         pdo \
@@ -48,15 +50,34 @@ RUN set -ex; \
         tidy \
         zip \
     ; \
+    # Install PECL PHP extensions. \
+    pecl install apcu-5.1.21 && docker-php-ext-enable apcu ; \
+    pecl install imagick-3.7.0 && docker-php-ext-enable imagick ; \
+    docker-php-ext-enable opcache ; \
+    # Clean up
+    rm -r /tmp/pear ; \
     \
+    # some misbehaving extensions end up outputting to stdout 🙈 (https://github.com/docker-library/wordpress/issues/669#issuecomment-993945967)
+    out="$(php -r 'exit(0);')"; \
+    [ -z "$out" ]; \
+    err="$(php -r 'exit(0);' 3>&1 1>&2 2>&3)"; \
+    [ -z "$err" ]; \
+    \
+    extDir="$(php -r 'echo ini_get("extension_dir");')"; \
+    [ -d "$extDir" ]; \
     runDeps="$( \
-        scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+        scanelf --needed --nobanner --format '%n#p' --recursive "$extDir" \
             | tr ',' '\n' \
             | sort -u \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )"; \
-    apk add --virtual .wordpress-phpexts-rundeps $runDeps; \
-    apk del .build-deps
+    apk add --no-network --virtual .wordpress-phpexts-rundeps $runDeps; \
+    apk del --no-network .build-deps; \
+    \
+    ! { ldd "$extDir"/*.so | grep 'not found'; }; \
+    # check for output like "PHP Warning:  PHP Startup: Unable to load dynamic library 'foo' (tried: ...)
+    err="$(php --version 3>&1 1>&2 2>&3)"; \
+    [ -z "$err" ]
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php

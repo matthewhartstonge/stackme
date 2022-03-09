@@ -13,7 +13,7 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 
 * nginx (alpine)
 * php-fpm 7 (alpine + customisation)
-* MariaDB/PostgresSQL
+* MariaDB/PostgreSQL
 * varnish-cache*
 
 *currently wordpress only.
@@ -55,16 +55,22 @@ imported.
 For the images to work better with popular CMS's the following php extensions 
 have been added to the base upstream image:
 
-* apcu - For an alternate opcache.
-* apcu_bc - This module provides a backwards APC compatible API using APCu (object caching).
-* gd - A graphics drawing library that enables manipulating image data.
-* imagick - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
-* mysqli - MySQL PHP driver.
-* pdo - A lean, consistent way to access databases.
-* pdo_pgsql - A driver that implements the PHP Data Objects (PDO) interface.
-* pgsql - PostgresSQL PHP Driver.
-* tidy - For correcting and minifying HTML assets.
-* zip - Well, for zipping things!
+* `apcu` - For an alternate user object cache.
+* `bcmath` - For arbitrary precision mathematics, which supports numbers of any size and precision up to 2147483647 decimal digits.
+* `bz2` - Provides bzip2 de/compression.
+* `exif` - For reading image metadata.
+* `gd` - A graphics drawing library that enables manipulating image data.
+* `ghostscript` - For interpreting PDFs.
+* `imagick` - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
+* `intl` - Enables performing locale-aware operations including but not limited to formatting, transliteration, encoding conversion, calendar operations, conformant collation, locating text boundaries and working with locale identifiers, timezones and graphemes.
+* `mysqli` - MySQL PHP driver.
+* `opcache` - Improves PHP performance by storing precompiled script bytecode in shared memory, thereby removing the need for PHP to load and parse scripts on each request.
+* `pdo` - A lean, consistent way to access databases.
+* `pdo_mysql` - A driver that implements the PHP Data Objects (PDO) interface for MySQL.
+* `pdo_pgsql` - A driver that implements the PHP Data Objects (PDO) interface for PostgreSQL.
+* `pgsql` - PostgresSQL PHP Driver.
+* `tidy` - For correcting and minifying HTML assets.
+* `zip` - Well, for zipping things!
 
 ## Building
 
