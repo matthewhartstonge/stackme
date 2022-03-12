@@ -12,7 +12,7 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 ## Features
 
 * nginx (alpine)
-* php-fpm 7 (alpine + customisation)
+* php-fpm 7/8 (alpine + customisation)
 * MariaDB/PostgreSQL
 * varnish-cache*
 
