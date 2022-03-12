@@ -60,7 +60,6 @@ have been added to the base upstream image:
 * `bz2` - Provides bzip2 de/compression.
 * `exif` - For reading image metadata.
 * `gd` - A graphics drawing library that enables manipulating image data.
-* `ghostscript` - For interpreting PDFs.
 * `imagick` - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
 * `intl` - Enables performing locale-aware operations including but not limited to formatting, transliteration, encoding conversion, calendar operations, conformant collation, locating text boundaries and working with locale identifiers, timezones and graphemes.
 * `mysqli` - MySQL PHP driver.
@@ -71,6 +70,10 @@ have been added to the base upstream image:
 * `pgsql` - PostgresSQL PHP Driver.
 * `tidy` - For correcting and minifying HTML assets.
 * `zip` - Well, for zipping things!
+
+Apps installed:
+* `ghostscript` - For interpreting PDFs.
+* `imagick` - For processing images.
 
 ## Building
 
