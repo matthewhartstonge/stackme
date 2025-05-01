@@ -40,6 +40,7 @@ RUN set -ex; \
     docker-php-ext-install -j "$(nproc)" \
         bcmath \
         bz2 \
+        calendar \
         exif \
         gd \
         intl \
@@ -53,7 +54,7 @@ RUN set -ex; \
         zip \
     ; \
     # Install PECL PHP extensions. \
-    pecl install apcu-5.1.21 && docker-php-ext-enable apcu ; \
+    pecl install apcu-5.1.24 && docker-php-ext-enable apcu ; \
     pecl install imagick-3.7.0 && docker-php-ext-enable imagick ; \
     docker-php-ext-enable opcache ; \
     # Clean up
@@ -88,7 +89,6 @@ RUN { \
         echo 'opcache.interned_strings_buffer=8'; \
         echo 'opcache.max_accelerated_files=4000'; \
         echo 'opcache.revalidate_freq=2'; \
-        echo 'opcache.fast_shutdown=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 # https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
