@@ -1,5 +1,5 @@
 # refer upstream: https://github.com/docker-library/wordpress
-FROM php:7.3-fpm-alpine
+FROM php:7.3.33-fpm-alpine
 LABEL MAINTAINER="Matt Hartstonge <matt@mykro.co.nz>"
 
 RUN set -ex; \
