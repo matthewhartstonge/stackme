@@ -2,9 +2,10 @@ PHP_VERSION=8.0
 PHP_IMAGE=$(PHP_VERSION)-fpm-alpine
 APP_NAME=stackme
 DOCKER_REPO=matthewhartstonge
+DOCKER_PLATFORM=linux/amd64
 
 # obtain the latest php version according to upstream
-VERSION=$(shell docker run --rm php:${PHP_IMAGE} php -r 'echo PHP_VERSION;')
+VERSION=$(shell docker run --platform ${DOCKER_PLATFORM} --rm php:${PHP_IMAGE} php -r 'echo PHP_VERSION;')
 
 # HELP
 # This will output the help for each task
@@ -21,17 +22,14 @@ help: ## This help.
 # Docker Building
 pull-base-image: ## pull the latest version of the php base image
 	@echo 'Pulling latest version of php:$(PHP_IMAGE)'
-	docker pull php:${PHP_IMAGE}
-	$(eval VERSION=$(shell docker run --rm php:${PHP_IMAGE} php -r 'echo PHP_VERSION;'))
+	docker pull --platform linux/amd64 php:${PHP_IMAGE}
+	$(eval VERSION=$(shell docker run --platform ${DOCKER_PLATFORM} --rm php:${PHP_IMAGE} php -r 'echo PHP_VERSION;'))
 
 build: pull-base-image ## Build the container
-	docker build -t $(APP_NAME):$(PHP_VERSION) .
+	docker build --platform $(DOCKER_PLATFORM) -t $(APP_NAME):$(PHP_VERSION) .
 
 build-nc: pull-base-image ## Build the container without caching
-	docker build --no-cache -t $(APP_NAME) .
-
-scan: build
-	docker scan $(APP_NAME):$(PHP_VERSION)
+	docker build --platform $(DOCKER_PLATFORM) --no-cache -t $(APP_NAME) .
 
 
 # Docker tagging
@@ -52,12 +50,12 @@ publish: publish-version publish-latest ## Publish the `{version}` and `latest` 
 
 publish-latest: tag-latest ## Publish the `latest` tagged container
 	@echo 'publish latest to $(DOCKER_REPO)'
-	docker push $(DOCKER_REPO)/$(APP_NAME):latest
+	docker push --platform $(DOCKER_PLATFORM) $(DOCKER_REPO)/$(APP_NAME):latest
 
-publish-version: tag-version scan ## Publish the `{version}` tagged container
+publish-version: tag-version ## Publish the `{version}` tagged container
 	@echo 'publish $(VERSION) to $(DOCKER_REPO)'
-	docker push $(DOCKER_REPO)/$(APP_NAME):$(PHP_VERSION)
-	docker push $(DOCKER_REPO)/$(APP_NAME):$(VERSION)
+	docker push --platform $(DOCKER_PLATFORM) $(DOCKER_REPO)/$(APP_NAME):$(PHP_VERSION)
+	docker push --platform $(DOCKER_PLATFORM) $(DOCKER_REPO)/$(APP_NAME):$(VERSION)
 
 
 # PHP related info
