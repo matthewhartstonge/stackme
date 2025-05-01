@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    # Look for a `Dockerfile` in the `root` directory
+    directories:
+      - "docker/php/7.1"
+      - "docker/php/7.2"
+      - "docker/php/7.3"
+      - "docker/php/7.4"
+      - "docker/php/8.0"
+    # Check for updates once a week
+    schedule:
+      interval: "weekly"
+    groups:
+      php:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
