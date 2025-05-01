@@ -58,6 +58,7 @@ have been added to the base upstream image:
 * `apcu` - For an alternate user object cache.
 * `bcmath` - For arbitrary precision mathematics, which supports numbers of any size and precision up to 2147483647 decimal digits.
 * `bz2` - Provides bzip2 de/compression.
+* `calendar` - Provides functions to simplify converting between different calendar formats. 
 * `exif` - For reading image metadata.
 * `gd` - A graphics drawing library that enables manipulating image data.
 * `imagick` - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
