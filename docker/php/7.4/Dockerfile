@@ -40,6 +40,7 @@ RUN set -ex; \
     docker-php-ext-install -j "$(nproc)" \
         bcmath \
         bz2 \
+        calendar \
         exif \
         gd \
         intl \
