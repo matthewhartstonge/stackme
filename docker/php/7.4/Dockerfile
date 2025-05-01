@@ -12,7 +12,9 @@ RUN set -eux; \
     ;
 
 # install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
-RUN apk add --no-cache --virtual .build-deps \
+RUN set -ex; \
+    \
+    apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
         autoconf \
         bzip2-dev \
