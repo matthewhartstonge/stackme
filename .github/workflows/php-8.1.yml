@@ -1,14 +1,15 @@
-env:
-  IMAGE_NAME: 'matthewhartstonge/stackme'
-  PHP_VERSION: "8.1"
+name: "Docker Push matthewhartstonge/stackme:8.1"
 
-name: "Docker Push ${{ env.IMAGE_NAME }}:${{ env.PHP_VERSION }}"
 on:
   workflow_dispatch:
   push:
     branches: [ $default-branch ]
     paths:
-      - php/${{ env.PHP_VERSION }}
+      - php/8.1/*
+
+env:
+  IMAGE_NAME: 'matthewhartstonge/stackme'
+  PHP_VERSION: "8.1"
 
 jobs:
   build:
