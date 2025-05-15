@@ -1,0 +1,83 @@
+env:
+  IMAGE_NAME: 'matthewhartstonge/stackme'
+  PHP_VERSION: "8.1"
+
+name: "Docker Push ${{ env.IMAGE_NAME }}:${{ env.PHP_VERSION }}"
+on:
+  workflow_dispatch:
+  push:
+    branches: [ $default-branch ]
+    paths:
+      - php/${{ env.PHP_VERSION }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # https://github.com/sigstore/cosign-installer
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.8.2
+        with:
+          cosign-release: 'v2.5.0'
+
+      # Set up BuildKit Docker container builder to be able to build
+      # multi-platform images and export cache
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v3.4.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract version from Dockerfile
+        id: extract-version
+        run: |
+          version=$(awk -F ':' '/^FROM/ {print $2}' ./Dockerfile | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+          echo "PHP version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@6.16.0
+        with:
+          context: "docker/php/${{ env.PHP_VERSION }}/Dockerfile"
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.PHP_VERSION }}
+            ${{ env.IMAGE_NAME }}:${{ env.PHP_VERSION }}-php-fpm
+            ${{ env.IMAGE_NAME }}:${{ steps.extract-version.outputs.version }}
+            ${{ env.IMAGE_NAME }}:${{ steps.extract-version.outputs.version }}-php-fpm
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
