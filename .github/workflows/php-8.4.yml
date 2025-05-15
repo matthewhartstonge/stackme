@@ -3,9 +3,10 @@ name: "Docker Push matthewhartstonge/stackme:8.4"
 on:
   workflow_dispatch:
   push:
-    branches: [ $default-branch ]
+    branches:
+      - 'main'
     paths:
-      - docker/php/8.4/**
+      - 'docker/php/8.4/**'
 
 env:
   IMAGE_NAME: 'matthewhartstonge/stackme'
