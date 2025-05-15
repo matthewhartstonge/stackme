@@ -5,7 +5,7 @@ on:
   push:
     branches: [ $default-branch ]
     paths:
-      - php/8.1/**
+      - docker/php/8.1/**
 
 env:
   IMAGE_NAME: 'matthewhartstonge/stackme'
