@@ -1,18 +1,101 @@
 version: 2
 updates:
-  # Enable version updates for Docker
   - package-ecosystem: "docker"
-    # Look for a `Dockerfile` in the `root` directory
-    directories:
-      - "docker/php/7.1"
-      - "docker/php/7.2"
-      - "docker/php/7.3"
-      - "docker/php/7.4"
-      - "docker/php/8.0"
-      - "docker/php/8.1"
-      - "docker/php/8.2"
-      - "docker/php/8.3"
-      - "docker/php/8.4"
-    # Check for updates once a week
+    directory: "docker/php/7.1"
     schedule:
       interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/7.2"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/7.3"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/7.4"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/8.0"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/8.1"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/8.2"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/8.3"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/8.4"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
