@@ -1,5 +1,5 @@
 # refer upstream: https://github.com/docker-library/wordpress
-FROM php:8.5.0-fpm-alpine
+FROM php:8.5.1-fpm-alpine
 LABEL MAINTAINER="Matthew Hartstonge <matt@mykro.co.nz>"
 
 # persistent dependencies
