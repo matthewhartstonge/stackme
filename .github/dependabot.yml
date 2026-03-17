@@ -49,3 +49,14 @@ updates:
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
+  - package-ecosystem: "docker"
+    directory: "docker/php/8.5"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "matthewhartstonge"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"

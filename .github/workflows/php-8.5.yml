@@ -1,4 +1,4 @@
-name: "Docker Push matthewhartstonge/stackme:8.3"
+name: "Docker Push matthewhartstonge/stackme:8.5"
 
 on:
   workflow_dispatch:
@@ -6,11 +6,11 @@ on:
     branches:
       - 'main'
     paths:
-      - 'docker/php/8.3/**'
+      - 'docker/php/8.5/**'
 
 env:
   IMAGE_NAME: 'matthewhartstonge/stackme'
-  PHP_VERSION: "8.3"
+  PHP_VERSION: "8.5"
 
 jobs:
   build:
