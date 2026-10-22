@@ -9,6 +9,9 @@ RUN set -eux; \
 		ghostscript \
 # Alpine package for "imagemagick" contains ~120 .so files, see: https://github.com/docker-library/wordpress/pull/497
 		imagemagick \
+# Alpine packages ImageMagick's coders separately; without this Imagick reports no AVIF
+# support and WordPress silently falls back to GD, which discards ICC profiles
+		imagemagick-heic \
 	;
 
 # install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
@@ -20,8 +23,7 @@ RUN set -ex; \
 		bzip2-dev \
 		freetype-dev \
 		icu-dev \
-		imagemagick-dev \
-		libheif-dev \
+		imagemagick-dev libheif-dev \
 		libavif-dev \
 		libjpeg-turbo-dev \
 		libpng-dev \
@@ -30,7 +32,7 @@ RUN set -ex; \
 		postgresql-dev \
 		tidyhtml-dev \
 	; \
-	# Configure image support
+	\
 	docker-php-ext-configure gd \
 		--with-avif \
 		--with-freetype \
@@ -59,9 +61,9 @@ RUN set -ex; \
 	pecl install apcu-5.1.24 && docker-php-ext-enable apcu ; \
 # WARNING: imagick is likely not supported on Alpine: https://github.com/Imagick/imagick/issues/328
 # https://pecl.php.net/package/imagick
-	pecl install imagick-3.8.1 && docker-php-ext-enable imagick; \
-	# Clean up
-	rm -r /tmp/pear ; \
+	pecl install imagick-3.8.1; \
+	docker-php-ext-enable imagick; \
+	rm -r /tmp/pear; \
 	\
 # some misbehaving extensions end up outputting to stdout 🙈 (https://github.com/docker-library/wordpress/issues/669#issuecomment-993945967)
 	out="$(php -r 'exit(0);')"; \
