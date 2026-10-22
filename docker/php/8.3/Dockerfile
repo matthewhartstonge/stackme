@@ -9,6 +9,9 @@ RUN set -eux; \
         ghostscript \
         # Alpine package for "imagemagick" contains ~120 .so files, see: https://github.com/docker-library/wordpress/pull/497
         imagemagick \
+        # Alpine packages ImageMagick's coders separately; without this Imagick reports no AVIF
+        # support and WordPress silently falls back to GD, which discards ICC profiles
+        imagemagick-heic \
     ;
 
 # install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
@@ -20,8 +23,7 @@ RUN set -ex; \
         bzip2-dev \
         freetype-dev \
         icu-dev \
-        imagemagick-dev \
-        libheif-dev \
+        imagemagick-dev libheif-dev \
         libavif-dev \
         libjpeg-turbo-dev \
         libpng-dev \
@@ -35,7 +37,7 @@ RUN set -ex; \
         --with-avif \
         --with-freetype \
         --with-jpeg \
-        --with-webp  \
+        --with-webp \
     ; \
     # Configure postgres support
     docker-php-ext-configure pgsql -with-pgsql=/usr/include/postgresql/ ; \
@@ -58,10 +60,13 @@ RUN set -ex; \
     ; \
     # Install PECL PHP extensions. \
     pecl install apcu-5.1.24 && docker-php-ext-enable apcu ; \
-    pecl install imagick-3.8.0 && docker-php-ext-enable imagick ; \
-    docker-php-ext-enable opcache ; \
+    # WARNING: imagick is likely not supported on Alpine: https://github.com/Imagick/imagick/issues/328
+    # https://pecl.php.net/package/imagick
+    pecl install imagick-3.8.1; \
+    docker-php-ext-enable imagick; \
+    docker-php-ext-enable opcache; \
     # Clean up
-    rm -r /tmp/pear ; \
+    rm -r /tmp/pear; \
     \
     # some misbehaving extensions end up outputting to stdout 🙈 (https://github.com/docker-library/wordpress/issues/669#issuecomment-993945967)
     out="$(php -r 'exit(0);')"; \
@@ -87,17 +92,20 @@ RUN set -ex; \
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
-RUN { \
+# enabled by default in the php images: https://github.com/docker-library/php/pull/1587
+RUN set -eux; \
+    { \
         echo 'opcache.memory_consumption=128'; \
         echo 'opcache.interned_strings_buffer=8'; \
         echo 'opcache.max_accelerated_files=4000'; \
         echo 'opcache.revalidate_freq=2'; \
-    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
+    } > "$PHP_INI_DIR/conf.d/opcache-recommended.ini"
 
 # https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
+RUN set -eux; \
+    { \
 # https://www.php.net/manual/en/errorfunc.constants.php
 # https://github.com/docker-library/wordpress/issues/420#issuecomment-517839670
-RUN { \
         echo 'error_reporting = E_ERROR | E_WARNING | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_RECOVERABLE_ERROR'; \
         echo 'display_errors = Off'; \
         echo 'display_startup_errors = Off'; \
@@ -107,4 +115,4 @@ RUN { \
         echo 'ignore_repeated_errors = On'; \
         echo 'ignore_repeated_source = Off'; \
         echo 'html_errors = Off'; \
-    } > /usr/local/etc/php/conf.d/error-logging.ini
+    } > "$PHP_INI_DIR/conf.d/error-logging.ini"

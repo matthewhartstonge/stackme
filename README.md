@@ -12,7 +12,7 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 ## Features
 
 * nginx (alpine)
-* php-fpm 7/8 (alpine + customisation)
+* php-fpm 8 (alpine + customisation)
 * MariaDB/PostgreSQL
 * varnish-cache*
 
@@ -34,7 +34,7 @@ chmod +x conform.sh && ./conform.sh
 docker-compose up
 ```
 
-At which point Docker should do it's thing, pulling, building and getting ready
+At which point Docker should do its thing, pulling, building and getting ready
 for you to take over the interwebs. Yus.
 
 But, you probably wanna make that thing more secure. So crack into the docker
@@ -62,6 +62,7 @@ have been added to the base upstream image:
 * `exif` - For reading image metadata.
 * `gd` - A graphics drawing library that enables manipulating image data.
 * `imagick` - ImageMagick is a free and open-source software suite for displaying, creating, converting, modifying, and editing raster images.
+* `imagemagick-heic` - AVIF support for decoding HEIC/HEIF containers.
 * `intl` - Enables performing locale-aware operations including but not limited to formatting, transliteration, encoding conversion, calendar operations, conformant collation, locating text boundaries and working with locale identifiers, timezones and graphemes.
 * `mysqli` - MySQL PHP driver.
 * `opcache` - Improves PHP performance by storing precompiled script bytecode in shared memory, thereby removing the need for PHP to load and parse scripts on each request.
