@@ -1,8 +1,8 @@
 # StackMe
 
-##### An Nginx, PHP-FPM, Maria/Postgres Stack
+##### An Nginx, PHP-FPM, Maria/Postgres Wordpress Stack with extras!
 
-These stacks seek to provide a customisable more-ready-for-production 
+This stack seeks to provide a customisable more-ready-for-production 
 docker-compose based templates for php based CMSs.
 
 ## Why?
@@ -14,19 +14,15 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 * nginx (alpine)
 * php-fpm 8 (alpine + customisation)
 * MariaDB/PostgreSQL
-* varnish-cache*
-
-*currently wordpress only.
+* varnish cache
 
 ## Quickstart
 ### Fresh beginnings
 
 1. Make sure you have [docker][docker] AND [docker-compose][docker-compose] installed on your host.
-2. download the latest version of your hot new php based CMS:
-    * [Joomla](https://downloads.joomla.org/)
-    * [Wordpress](https://wordpress.org/download/)
-3. unzip that bad boy into the `./YOUR_CMS_CHOICE/html` folder.
-4. Run the following in a terminal to correct file ownership for alpine:
+2. download the latest version of [Wordpress](https://wordpress.org/download/).
+3. unzip that bad boy into the `./wordpress/html` folder.
+4. Run the following in a terminal to correct file ownership for alpine (it uses 101 for www-data, which is different to debian based OSes):
 
 ```sh
 cd ./wordpress
@@ -95,12 +91,6 @@ To start playing with this stack, run:
 ```shell
 docker-compose -f ./wordpress/docker-compose.varnish.yml up
 ```
-
-## Todo
-
-- [ ] Nginx SSL config.
-- [ ] Create script to get latest CMS - that also puts files in the right places.
-- [ ] Create script to generate config given a site name.
 
 ## Contributions
 Will take Issues, PRs, new CMS stacks, db/php performance tweaks - all the things!
