@@ -5,7 +5,7 @@ networks:
 
 services:
   certbot:
-    image: certbot/certbot
+    image: certbot/certbot:latest
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -18,7 +18,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --deploy-hook 'nginx -s reload' || true; done'"
 
   nginx:
-    image: nginx:stable-alpine
+    image: nginx:1.31.8-alpine
     platform: linux/amd64
     networks:
       - php
@@ -38,7 +38,7 @@ services:
       - ./wordpress/html:/var/www/html
 
   varnish:
-    image: varnish:stable
+    image: varnish:6.0.18
     platform: linux/amd64
     networks:
       - varnish
@@ -71,7 +71,7 @@ services:
       - ./wordpress/html:/var/www/html
 
   mariadb:
-    image: mariadb:12.3
+    image: mariadb:12.3.3
     environment:
       MARIADB_AUTO_UPGRADE: 1
       MYSQL_ROOT_PASSWORD: "${SITE_MYSQL_ROOT_PASSWORD}"
