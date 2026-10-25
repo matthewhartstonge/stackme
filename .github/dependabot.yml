@@ -5,6 +5,29 @@ updates:
     schedule:
       interval: "weekly"
 
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "matthewhartstonge/stackme" # Track latest minor release
+        update-types:
+          - "version-update:semver-major"
+
+      - dependency-name: "mariadb" # Track LTS patch releases
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+
+      - dependency-name: "nginx" # Track latest release
+        update-types:
+          - "version-update:semver-major"
+
+      - dependency-name: "varnish" # Track stable release, manual
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+
   - package-ecosystem: "docker"
     directory: "docker/php/8.1"
     schedule:

@@ -1,5 +1,21 @@
 vcl 4.0;
 
+sub vcl_hit {
+    set req.http.X-Cache = "hit";
+}
+
+sub vcl_miss {
+    set req.http.X-Cache = "miss";
+}
+
+sub vcl_pass {
+    set req.http.X-Cache = "pass";
+}
+
+sub vcl_pipe {
+    set req.http.X-Cache = "pipe uncacheable";
+}
+
 // Specify that the backend (nginx) is listening on port 8080.
 backend default {
   .host = "nginx";
@@ -13,12 +29,14 @@ acl purger {
 }
 
 sub vcl_recv {
-    // Redirect HTTP requests to HTTPS for our SSL website
-    //if (client.ip != "127.0.0.1" && req.http.host ~ "localhost") {
-    //    set req.http.x-redir = "https://" + req.http.host + req.url;
-    //    return(synth(850, ""));
-    //}
+    unset req.http.X-Cache;
 
+    // Strip Range headers for HTML requests (stops partial content returns)
+    if (req.http.Range) {
+        if (req.url !~ "\.(mp4|mp3|ogg|webm|pdf)$") {
+            unset req.http.Range;
+        }
+    }
 
     // Allow cache-purging requests only from the IP addresses in the above acl purger.
     // If a purge request comes from a different IP address, an error message will be produced.
@@ -52,9 +70,16 @@ sub vcl_recv {
         return (pass);
     }
 
+    // Remove has_js and CloudFlare/Google Analytics __* cookies and statcounter is_unique
+    set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(_[_a-z]+|has_js|is_unique)=[^;]*", "");
+
+    // Remove a ";" prefix, if present.
+    set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
+
     // WordPress sets many cookies that are safe to ignore.
     set req.http.cookie = regsuball(req.http.cookie, "wp-settings-\d+=[^;]+(; )?", "");
     set req.http.cookie = regsuball(req.http.cookie, "wp-settings-time-\d+=[^;]+(; )?", "");
+    set req.http.Cookie = regsuball(req.http.Cookie, "wordpress_test_cookie=[^;]+(; )?", "");
     if (req.http.cookie == "") {
         unset req.http.cookie;
     }
@@ -62,6 +87,8 @@ sub vcl_recv {
 
 // Redirect HTTP to HTTPS.
 sub vcl_synth {
+    set resp.http.X-Cache = "synth synth";
+
     if (resp.status == 850) {
         set resp.http.Location = req.http.x-redir;
         set resp.status = 302;
@@ -87,8 +114,14 @@ sub vcl_purge {
 // Here, we’ve set the caching time to 24 hours, and the grace period to
 // 1 hour, but you can adjust these settings based on your needs.
 sub vcl_backend_response {
-    set beresp.ttl = 24h;
+    set beresp.ttl = 4h;
     set beresp.grace = 1h;
+
+    if (beresp.status == 206) {
+        // Don't cache partial responses (range header)
+        set beresp.uncacheable = true;
+        return(deliver);
+    }
 
     if (bereq.url !~ "wp-admin|wp-login|product|cart|checkout|my-account|/?remove_item=") {
         unset beresp.http.set-cookie;
@@ -100,4 +133,13 @@ sub vcl_deliver {
     if (req.http.X-Purger) {
         set resp.http.X-Purger = req.http.X-Purger;
     }
+
+    if (obj.uncacheable) {
+        set req.http.X-Cache = req.http.X-Cache + " uncacheable" ;
+    } else {
+        set req.http.X-Cache = req.http.X-Cache + " cached" ;
+    }
+
+    // set X-Cache header in response
+    set resp.http.X-Cache = req.http.X-Cache;
 }
