@@ -12,9 +12,10 @@ bank as you now have a solid-docker-composed-super-speedy-stack.
 ## Features
 
 * nginx (alpine)
-* php-fpm 8 (alpine + customisation)
+* certbot for SSL/TLS certificate generation
+* php-fpm 8.X (alpine + customisation)
 * MariaDB/PostgreSQL
-* varnish cache
+* Varnish cache
 
 ## Quickstart
 ### Fresh beginnings

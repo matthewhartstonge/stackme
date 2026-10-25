@@ -1,0 +1,96 @@
+networks:
+  mysql:
+  php:
+  varnish:
+
+services:
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Automatically rotates when the file hits 10 Megabytes
+        max-file: "3"     # Keeps a maximum of 3 historical log files
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --deploy-hook 'nginx -s reload' || true; done'"
+
+  nginx:
+    image: nginx:stable-alpine
+    platform: linux/amd64
+    networks:
+      - php
+      - varnish
+    ports:
+      - "80:80"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Automatically rotates when the file hits 10 Megabytes
+        max-file: "3"     # Keeps a maximum of 3 historical log files
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - ./wordpress/html:/var/www/html
+
+  varnish:
+    image: varnish:stable
+    platform: linux/amd64
+    networks:
+      - varnish
+    tmpfs:
+      - /usr/local/var/varnish:exec
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Automatically rotates when the file hits 10 Megabytes
+        max-file: "3"     # Keeps a maximum of 3 historical log files
+    volumes:
+      - ./varnish/default.vcl:/etc/varnish/default.vcl:ro
+
+  php-fpm:
+    # Uncomment the build context in order to build with any changes made
+    # to the docker file.
+    #build:
+    #  context: ../docker/php/8.5
+    image: matthewhartstonge/stackme:8.5.12
+    networks:
+      - mysql
+      - php
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Automatically rotates when the file hits 10 Megabytes
+        max-file: "3"     # Keeps a maximum of 3 historical log files
+    volumes:
+      - ./docker/php/www8.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ./wordpress/html:/var/www/html
+
+  mariadb:
+    image: mariadb:12.3
+    environment:
+      MARIADB_AUTO_UPGRADE: 1
+      MYSQL_ROOT_PASSWORD: "${SITE_MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${SITE_MYSQL_DATABASE}"
+      MYSQL_USER: "${SITE_MYSQL_USER}"
+      MYSQL_PASSWORD: "${SITE_MYSQL_PASSWORD}"
+    networks:
+      - mysql
+    # Uncomment the ports block if you want to connect to the database locally.
+    #ports:
+    #  - "3306:3306"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Automatically rotates when the file hits 10 Megabytes
+        max-file: "3"     # Keeps a maximum of 3 historical log files
+    volumes:
+      - ./wordpress/dbdata/mysql:/var/lib/mysql
+      # import a mysqldump backup. Make sure to edit the file and add USE your_db;
+      # At the top of the script. After importing, due to the persistent folder
+      # mapping, you can comment out the mapping below.
+      #- ./wordpress/dbdata/backup.sql:/docker-entrypoint-initdb.d/mysql.sql
